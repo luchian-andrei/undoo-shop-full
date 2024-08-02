@@ -1,10 +1,11 @@
 require("dotenv").config();
 const express = require("express");
-const { PORT } = require("./site.config.js");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+
+const PORT = process.env.PORT;
 
 const app = express();
 app.use(express.json());
@@ -15,8 +16,6 @@ app.use(
     credentials: true,
   })
 );
-
-// app.use(cors());
 
 const router = require("./router.js");
 app.use(router);
