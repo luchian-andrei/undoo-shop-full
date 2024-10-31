@@ -20,7 +20,7 @@ const New = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5555/trending/" + gender)
+      .get("https://undoo-shop-back.onrender.com/trending/" + gender)
       .then((res) => setProducts(res.data.products));
   }, [gender]);
 

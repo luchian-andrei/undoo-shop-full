@@ -21,7 +21,7 @@ const Sales = () => {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5555/sales/" + gender)
+      .get("https://undoo-shop-back.onrender.com/sales/" + gender)
       .then((res) => setProducts(res.data.products));
   }, [gender]);
 

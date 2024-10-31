@@ -2,7 +2,7 @@ import axios from "axios";
 
 const getProducts = async (gender) => {
   return axios
-    .get("http://localhost:5555/sales/" + gender)
+    .get("https://undoo-shop-back.onrender.com/sales/" + gender)
     .then((res) => res.data);
 };
 
