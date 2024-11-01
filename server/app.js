@@ -24,7 +24,7 @@ app.use(router);
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
-  res.status(200).send("Hello Mr. Stark !");
+  res.status(200).send("Seek and you will find !");
 });
 
 mongoose
