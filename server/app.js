@@ -11,20 +11,12 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.use(
-  cors({
-    origin: ["https://undoo-shop-api.vercel.app/"],
-    methods: ["POST", "GET", "PUT"],
-    credentials: true,
-  })
-);
-
 const router = require("./router.js");
 app.use(router);
 app.use(bodyParser.json());
 
 app.get("/", (req, res) => {
-  res.status(200).send("Hello Mr. Stark !");
+  res.status(200).send("Seek and you will find");
 });
 
 mongoose
