@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import TrendingCard from "../components/Cards/TrendingCard";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
@@ -9,7 +9,6 @@ import {
   faChildReaching,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import TextCarousel from "../components/General-Use/TextCarousel";
 
 import { getTrendingProducts } from "../api/home";

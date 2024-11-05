@@ -1,24 +1,28 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
-// import { getNotifications, updateNotifications } from "../api/notifications";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import NotificationCard from "../components/Cards/NotificationCard";
+import NotificationsSkeleton from "../components/loaders/NotificationsSkeleton";
+import { getNotifications } from "../api/notifications";
+
+const skeletons = [1, 2, 3, 4];
 
 const Notifications = ({ closeNotifications }) => {
-  const queryClient = useQueryClient();
   const [notifications, setNotifications] = useState([]);
 
-  // const mutation = useMutation({
-  //   mutationFn: (id, read) => updateNotifications(id, read),
-  //   onSuccess: () => {
-  //     queryClient.invalidateQueries({ queryKey: ["notifications"] });
-  //   },
-  // });
-
-  const { data } = useQuery({
+  const { data, status } = useQuery({
     queryKey: ["notifications"],
-    queryFn: () => setNotifications(data.notifications),
+    queryFn: () => getNotifications(),
   });
+
+  useEffect(() => {
+    if (status === "success") {
+      setNotifications(data.notifications);
+    } else {
+      setNotifications([]);
+    }
+  }, [status]);
 
   // when you want to delete a notification you only delete
   // it from the state, not from database
@@ -40,36 +44,27 @@ const Notifications = ({ closeNotifications }) => {
         />
 
         <section className="relative overflow-y-scroll no-scrollbar grid grid-cols-1 gap-3">
-          {notifications?.length > 0 ? (
-            notifications.map((notification, index) => {
-              return (
-                <div
-                  key={index}
-                  className="bg-gray-100 text-black p-4 rounded-sm shadow-lg flex justify-between items-center mb-2"
-                >
-                  <div>
-                    <p className="text-xl font-bold">{notification.text}</p>
-                    <p className="text-sm text-gray-400">
-                      {new Date(notification.date).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <FontAwesomeIcon
-                    icon={faXmark}
+          {status === "success" ? (
+            notifications.length > 0 ? (
+              notifications.map((notification, index) => {
+                return (
+                  <NotificationCard
                     key={index}
-                    className="self-start cursor-pointer text-2xl"
-                    onClick={() =>
-                      setNotifications(
-                        notifications.filter(
-                          (notif) => notif._id !== notification._id
-                        )
-                      )
-                    }
+                    setNotifications={setNotifications}
+                    notification={notification}
+                    notifications={notifications}
                   />
-                </div>
-              );
-            })
+                );
+              })
+            ) : (
+              <p className="text-black text-center text-2xl">
+                No notifications
+              </p>
+            )
           ) : (
-            <p className="text-black text-center text-2xl">No notifications </p>
+            skeletons.map((skeleton, index) => (
+              <NotificationsSkeleton key={index} />
+            ))
           )}
         </section>
       </section>

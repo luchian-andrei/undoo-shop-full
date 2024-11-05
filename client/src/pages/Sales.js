@@ -3,27 +3,17 @@ import { useParams, Link } from "react-router-dom";
 import { getProducts } from "../api/sales";
 import { useQuery } from "@tanstack/react-query";
 import GeneralCard from "../components/Cards/GeneralCard";
-import { useState, useEffect } from "react";
 import ProductSkeleton from "../components/loaders/ProductSkeleton";
 
 const Sales = () => {
   let { gender } = useParams();
 
-  const { data } = useQuery({
+  const { data, status } = useQuery({
     queryKey: ["sales", gender],
     queryFn: () => getProducts(gender),
   });
 
   const products = data?.products;
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (products === undefined) {
-      setLoading(true);
-    } else {
-      setLoading(false);
-    }
-  }, [products]);
 
   return (
     <section className="flex min-h-screen justify-center items-center  overflow-x-hidden overflow-y-visible flex-col mt-12 py-14">
@@ -37,7 +27,7 @@ const Sales = () => {
         Sales / {gender}
       </p>
       <section className="p-4 grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-10 text-black mt-10 mb-20">
-        {!loading ? (
+        {status === "success" ? (
           products?.map((product, index) => {
             return (
               <Link to={"/product/" + product._id} key={index}>

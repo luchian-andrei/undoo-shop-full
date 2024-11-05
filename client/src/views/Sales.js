@@ -8,9 +8,7 @@ import {
   faPersonDress,
   faChildReaching,
 } from "@fortawesome/free-solid-svg-icons";
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import { getSalesProducts } from "../api/home";
 import TextCarousel from "../components/General-Use/TextCarousel";
 import { useQuery } from "@tanstack/react-query";

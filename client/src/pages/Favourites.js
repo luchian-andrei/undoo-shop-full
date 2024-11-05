@@ -3,9 +3,12 @@ import { Link } from "react-router-dom";
 import { getFavorites } from "../api/favorites";
 import { useQuery } from "@tanstack/react-query";
 import GeneralCard from "../components/Cards/GeneralCard";
+import ProductSkeleton from "../components/loaders/ProductSkeleton";
+
+const skeletons = [1, 2, 3, 4];
 
 const Favourites = () => {
-  const { data } = useQuery({
+  const { data, status } = useQuery({
     queryKey: ["favorites"],
     queryFn: getFavorites,
   });
@@ -19,19 +22,16 @@ const Favourites = () => {
       </p>
 
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 p-4 mt-10 mb-20 ">
-        {products?.length > 0
-          ? products.map((product, index) => {
+        {status === "success"
+          ? products?.map((product, index) => {
               return (
                 <Link to={"/product/" + product._id} key={index}>
                   <GeneralCard data={product} key={index} />
                 </Link>
               );
             })
-          : null}
+          : skeletons.map((skeleton, index) => <ProductSkeleton key={index} />)}
       </section>
-      <p className="text-center flex justify-center items-center">
-        No favorites products
-      </p>
     </section>
   );
 };

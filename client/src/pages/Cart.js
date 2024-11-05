@@ -5,13 +5,18 @@ import { getCart } from "../api/cart";
 import CartCard from "../components/Cards/CartCard";
 import { useQuery } from "@tanstack/react-query";
 
+import CartProductSkeleton from "../components/loaders/CartProductSkeleton";
+import CartTotalSkeleton from "../components/loaders/CartTotalSkeleton";
+
+const skeletons = [1, 2, 3, 4];
+
 const Cart = () => {
   const [total, setTotal] = useState(0);
   const navigate = useNavigate();
 
-  const { data } = useQuery({
+  const { data, status } = useQuery({
     queryKey: ["cart-products"],
-    queryFn: getCart,
+    queryFn: () => getCart(),
   });
 
   const products = data?.products;
@@ -31,7 +36,11 @@ const Cart = () => {
       </div>
 
       <section className="sm:w-3/4 w-full grid grid-cols-1 gap-4 m-auto p-4">
-        {products?.length > 0 ? (
+        {status === "pending" ? (
+          skeletons.map((skeleton, index) => (
+            <CartProductSkeleton key={index} />
+          ))
+        ) : products?.length > 0 ? (
           products.map((product, index) => {
             return <CartCard data={product} key={index} />;
           })
@@ -39,7 +48,10 @@ const Cart = () => {
           <p className="text-center">No products in cart</p>
         )}
       </section>
-      {products?.length > 0 ? (
+
+      {status === "pending" ? (
+        <CartTotalSkeleton />
+      ) : products?.length > 0 ? (
         <div className="flex m-auto justify-around items-center w-3/4 bg-stone-100 font-semibold py-2">
           <p>Your total is</p>
           <p>{total} Lei</p>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link, useParams } from "react-router-dom";
 import { getBrands } from "../api/brands";
 import { useQuery } from "@tanstack/react-query";
@@ -7,28 +7,19 @@ import AllBrandsSkeleton from "../components/loaders/AllBrandsSkeleton";
 const Brands = () => {
   const { gender } = useParams();
 
-  const { data } = useQuery({
+  const { data, status } = useQuery({
     queryKey: ["brands", gender],
     queryFn: () => getBrands(gender),
   });
 
   const brands = data?.brands;
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (brands === undefined) {
-      setLoading(true);
-    } else {
-      setLoading(false);
-    }
-  }, [brands]);
 
   return (
     <section className="h-fit flex overflow-x-hidden flex-col mt-12 py-14">
       <p className="my-10 ml-10 text-xl font-semibold underline text-black">
         Brands for {gender}
       </p>
-      {!loading ? (
+      {status === "success" ? (
         <section className="py-4 grid md:grid-cols-2 md:grid-rows-2  grid-cols-1 grid-rows-1  mx-auto sm:gap-12 gap-8 w-3/4 self-center  text-center">
           {brands.map((brand, index) => (
             <Link key={index} to={"/" + brand + "/" + gender}>
