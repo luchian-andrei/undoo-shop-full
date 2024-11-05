@@ -3,6 +3,9 @@ import { Link, useParams } from "react-router-dom";
 import GeneralCard from "../components/Cards/GeneralCard";
 import { getBrand } from "../api/brands";
 
+import { useState, useEffect } from "react";
+import ProductSkeleton from "../components/loaders/ProductSkeleton";
+
 import { useQuery } from "@tanstack/react-query";
 
 const BrandPage = () => {
@@ -14,6 +17,15 @@ const BrandPage = () => {
   });
 
   const products = data?.products;
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (products === undefined) {
+      setLoading(true);
+    } else {
+      setLoading(false);
+    }
+  }, [products]);
 
   return (
     <section className="flex justify-center items-center  overflow-x-hidden overflow-y-visible flex-col mt-20">
@@ -21,8 +33,8 @@ const BrandPage = () => {
         {`"${brand}"`} for {gender}
       </p>
       <section className="p-4 grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-y-32 gap-x-10 lg:gap-10 text-black mt-10 mb-20">
-        {products?.length > 0 ? (
-          products.map((product, index) => {
+        {!loading ? (
+          products?.map((product, index) => {
             return (
               <Link to={"/product/" + product._id} key={index}>
                 <GeneralCard data={product} key={index} />
@@ -30,7 +42,12 @@ const BrandPage = () => {
             );
           })
         ) : (
-          <p>No products found</p>
+          <>
+            <ProductSkeleton />
+            <ProductSkeleton />
+            <ProductSkeleton />
+            <ProductSkeleton />
+          </>
         )}
       </section>
     </section>

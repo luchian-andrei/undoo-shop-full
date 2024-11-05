@@ -11,19 +11,23 @@ import {
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { getSalesProducts } from "../api/home";
 import TextCarousel from "../components/General-Use/TextCarousel";
+import { useQuery } from "@tanstack/react-query";
+import ProductSkeleton from "../components/loaders/ProductSkeleton";
 
 const text = ["Sales", "Sales", "Sales", "Sales", "Sales"];
+const skeletons = [1, 2, 3, 4, 5];
 
 const Sales = () => {
   const [gender, setGender] = useState("men");
-  const [products, setProducts] = useState([]);
 
-  useEffect(() => {
-    axios
-      .get("https://undoo-shop-back.onrender.com/sales/" + gender)
-      .then((res) => setProducts(res.data.products));
-  }, [gender]);
+  const { data, status } = useQuery({
+    queryKey: ["sales", gender],
+    queryFn: () => getSalesProducts(gender),
+  });
+
+  const products = data?.products;
 
   const responsive = {
     superLargeDesktop: {
@@ -78,13 +82,17 @@ const Sales = () => {
       </div>
       <div className="p-6">
         <Carousel responsive={responsive} swipeable={true} className="z-0">
-          {products.slice(0, 12).map((product, index) => {
-            return (
-              <Link key={index} to={"/product/" + product._id}>
-                <SalesCard data={product} key={index} />
-              </Link>
-            );
-          })}
+          {status === "success"
+            ? products?.slice(0, 12).map((product, index) => {
+                return (
+                  <Link key={index} to={"/product/" + product._id}>
+                    <SalesCard data={product} key={index} />
+                  </Link>
+                );
+              })
+            : skeletons.map((skeleton, index) => (
+                <ProductSkeleton key={index} />
+              ))}
         </Carousel>
       </div>
     </section>

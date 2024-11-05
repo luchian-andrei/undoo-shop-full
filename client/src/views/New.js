@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import TrendingCard from "../components/Cards/TrendingCard";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
@@ -10,19 +10,24 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import TextCarousel from "../components/General-Use/TextCarousel";
-import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+
+import ProductSkeleton from "../components/loaders/ProductSkeleton";
+
+import { getNewProducts } from "../api/home";
 
 const text = ["New", "New", "New", "New", "New"];
+const skeletons = [1, 2, 3, 4, 5];
 
 const New = () => {
   const [gender, setGender] = useState("men");
-  const [products, setProducts] = useState([]);
 
-  useEffect(() => {
-    axios
-      .get("https://undoo-shop-back.onrender.com/trending/" + gender)
-      .then((res) => setProducts(res.data.products));
-  }, [gender]);
+  const { data, status } = useQuery({
+    queryKey: ["new-arrivals", gender],
+    queryFn: () => getNewProducts(gender),
+  });
+
+  const products = data?.products;
 
   const responsive = {
     superLargeDesktop: {
@@ -77,13 +82,17 @@ const New = () => {
       </div>
       <div className="p-6">
         <Carousel responsive={responsive} swipeable={true} className="z-0">
-          {products.slice(0, 12).map((product, index) => {
-            return (
-              <Link key={index} to={"/product/" + product._id}>
-                <TrendingCard data={product} key={index} />
-              </Link>
-            );
-          })}
+          {status === "success"
+            ? products?.slice(0, 12).map((product, index) => {
+                return (
+                  <Link key={index} to={"/product/" + product._id}>
+                    <TrendingCard data={product} key={index} />
+                  </Link>
+                );
+              })
+            : skeletons.map((skeleton, index) => (
+                <ProductSkeleton key={index} />
+              ))}
         </Carousel>
       </div>
     </section>

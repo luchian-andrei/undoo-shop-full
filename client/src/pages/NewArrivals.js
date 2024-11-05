@@ -2,6 +2,8 @@ import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getProducts } from "../api/new-arrivals";
 import GeneralCard from "../components/Cards/GeneralCard";
+import ProductSkeleton from "../components/loaders/ProductSkeleton";
+import { useEffect, useState } from "react";
 
 const NewArrivals = () => {
   let { gender } = useParams();
@@ -12,6 +14,15 @@ const NewArrivals = () => {
   });
 
   const products = data?.products;
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (products === undefined) {
+      setLoading(true);
+    } else {
+      setLoading(false);
+    }
+  }, [products]);
 
   return (
     <section className="flex justify-center items-center  overflow-x-hidden overflow-y-visible flex-col mt-20">
@@ -24,8 +35,8 @@ const NewArrivals = () => {
         New Arrivals / {gender}{" "}
       </p>
       <section className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-32 gap-x-10 lg:gap-10 text-black mt-10 mb-20">
-        {products?.length > 0 ? (
-          products.map((product, index) => {
+        {!loading ? (
+          products?.map((product, index) => {
             return (
               <Link to={"/product/" + product._id} key={index}>
                 <GeneralCard data={product} />
@@ -33,7 +44,12 @@ const NewArrivals = () => {
             );
           })
         ) : (
-          <p>No products here</p>
+          <>
+            <ProductSkeleton />
+            <ProductSkeleton />
+            <ProductSkeleton />
+            <ProductSkeleton />
+          </>
         )}
       </section>
     </section>

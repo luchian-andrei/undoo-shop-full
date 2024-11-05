@@ -3,11 +3,12 @@ import { useParams, Link } from "react-router-dom";
 import { getProducts } from "../api/products";
 import { useQuery } from "@tanstack/react-query";
 import GeneralCard from "../components/Cards/GeneralCard";
+import ProductSkeleton from "../components/loaders/ProductSkeleton";
 
 const Accesories = () => {
   let { gender } = useParams();
 
-  const { data } = useQuery({
+  const { data, status } = useQuery({
     queryKey: ["accesories", gender],
     queryFn: () => getProducts("accesories", gender),
   });
@@ -20,8 +21,8 @@ const Accesories = () => {
         Accesories / {gender}
       </p>
       <section className="p-4 grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-y-32 gap-x-10 lg:gap-10 text-black mt-10 mb-20">
-        {products?.length > 0 ? (
-          products.map((product, index) => {
+        {status === "success" ? (
+          products?.map((product, index) => {
             return (
               <Link to={"/product/" + product._id} key={index}>
                 <GeneralCard data={product} />
@@ -29,7 +30,12 @@ const Accesories = () => {
             );
           })
         ) : (
-          <p>No products found</p>
+          <>
+            <ProductSkeleton />
+            <ProductSkeleton />
+            <ProductSkeleton />
+            <ProductSkeleton />
+          </>
         )}
       </section>
     </section>
